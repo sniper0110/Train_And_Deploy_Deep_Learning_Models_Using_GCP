@@ -117,6 +117,14 @@ def download_data_to_local_directory(bucket_name, local_directory):
                 blob.download_to_filename(joined_path)
 
 
+def upload_data_to_bucket(bucket_name, path_to_data, bucket_blob_name):
+
+    storage_client = storage.Client.from_service_account_json(path_to_credentials)
+    bucket = storage_client.get_bucket(bucket_name)
+
+    blob = bucket.blob(bucket_blob_name)
+    blob.upload_from_filename(path_to_data)
+
 
 if __name__ == '__main__':
 

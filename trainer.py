@@ -11,11 +11,12 @@ from sklearn.metrics import classification_report, confusion_matrix
 import os
 import numpy as np
 
-from DataHandler import download_data_to_local_directory
+from DataHandler import download_data_to_local_directory, upload_data_to_bucket
 
 from tensorflow.python.client import device_lib
 import argparse
-
+from datetime import datetime
+import shutil
 
 
 def build_model(nbr_classes):
@@ -98,7 +99,7 @@ def get_number_of_imgs_inside_folder(directory):
     return totalcount
 
 
-def train(path_to_data, batch_size, epochs, learning_rate):
+def train(path_to_data, batch_size, epochs, learning_rate, models_bucket_name):
 
     path_train_data = os.path.join(path_to_data, 'training')
     path_val_data = os.path.join(path_to_data, 'validation')
@@ -128,7 +129,9 @@ def train(path_to_data, batch_size, epochs, learning_rate):
 
     early_stopping = EarlyStopping(monitor='val_loss', patience=5)
 
-    path_to_save_model = './tmp'
+    now = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
+    path_to_save_model = f'./tmp/model_{now}' + '_{val_loss:.2f}'
+
     if not os.path.isdir(path_to_save_model):
         os.makedirs(path_to_save_model)
 
@@ -172,6 +175,14 @@ def train(path_to_data, batch_size, epochs, learning_rate):
     print("Done evaluating!")
     loss = scores[0]
     print(f"loss for hyptertune = {loss}")
+
+    # Zip then copy model to bucket
+    zipped_folder_name = f'trained_model_{now}_loss_{loss}'
+    shutil.make_archive(zipped_folder_name, 'zip', '/usr/src/app/tmp')
+
+    path_to_zipped_folder_name = '/usr/src/app/' + zipped_folder_name + '.zip'
+    upload_data_to_bucket(models_bucket_name, path_to_zipped_folder_name, zipped_folder_name)
+
     hpt = hypertune.HyperTune()
     hpt.report_hyperparameter_tuning_metric(hyperparameter_metric_tag='loss', 
                                             metric_value=loss, global_step=epochs)
@@ -185,7 +196,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--bucket_name", type=str, help="Bucket name on google cloud storage",
-                        default="dummy-food-data-bucket")
+                        default="food-data-bucket")
+
+    parser.add_argument("--models_bucket_name", type=str, help="Bucket name on google cloud storage",
+                        default="trained_models_food_classification")                        
 
     parser.add_argument("--batch_size", type=int, help="Batch size used by the deep learning model", 
                         default=2)
@@ -199,5 +213,5 @@ if __name__ == "__main__":
     download_data_to_local_directory(args.bucket_name, "./data")
     print("Download finished!")
 
-    path_to_data = './data/dummy'
-    train(path_to_data, args.batch_size, 10, args.learning_rate)
+    path_to_data = './data'
+    train(path_to_data, args.batch_size, 20, args.learning_rate, args.models_bucket_name)
