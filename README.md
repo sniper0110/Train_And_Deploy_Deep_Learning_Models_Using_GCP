@@ -20,8 +20,3 @@ This was the motivation behind creating this course. To simply make your life ea
 
 Many introductory courses just show you how to train a deep neural network. But in real life, that's only a small part of an AI project. In this course, I try to show you a global picture of how Artificial Intelligence projects are made.
 
-One very important thing that you should know is that when you face a problem throughout the course, my job is to help you solve it. You can see from the reviews of this course (and my other courses) that students are happy with the support that I offer them throughout their learning journey.
-
-And of course, if you're not happy with the course content then you have a 30 days money back guarantee, so you have nothing to worry about!
-
-I really hope to see you in class :)
