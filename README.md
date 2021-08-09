@@ -3,7 +3,7 @@
 This repository contains code for training an image recognition deep learning model to recognize different types of food. It also contains code about how to dockerize
 your code so that you can run the training on google cloud platform.
 
-This code is part of my online course that you can find [HERE](https://www.udemy.com/course/train-and-deploy-deep-learning-models/?couponCode=TRAINDEPL15_04_21).
+This code is part of my online course that you can find [HERE](https://www.aifee.co/p/train-deploy-image-recognition-deep-learning-models).
 
 # Course description
 This course will take you through the steps that a machine learning engineer would take to train and deploy a deep learning model. We will start the course by defining an end goal that we want to achieve. Then, we will download a dataset that will help us achieve that goal. We will build a Convolutional Neural Network using Tensorflow 2 with Keras and then we will train this network on Google AI Platform. After saving the best trained model, we will deploy it as a web app using Flask and Google Cloud Run. Throughout the course, we will be using Docker to containerize our code.
